@@ -1,0 +1,15 @@
+.tab {
+  color: #8D8F96;
+  cursor: pointer;
+  user-select: none;
+  transition: all .2s ease;
+}
+
+.tab:hover {
+  color: #adb0ba;
+}
+
+.tab--selected, .tab--selected:hover {
+  font-weight: 500;
+  color: white;
+}

@@ -1,0 +1,27 @@
+.chat-overlay {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-overlay__top {
+  padding-top: 36px;
+  width: 94%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.chat-overlay__controls {
+  display: flex;
+  column-gap: 8px;
+  padding-bottom: 36px;
+}
+
+.chat-overlay__name {
+  font-size: 22px;
+  line-height: 22px;
+}

@@ -1,0 +1,32 @@
+.join-screen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.join-screen__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 20px;
+  min-width: 400px;
+  background-color: #2F3036;
+  border-radius: 15px;
+  padding: 28px 24px;
+}
+
+.join-screen__content-row {
+  width: 100%;
+  display: flex;
+  column-gap: 12px;
+}
+
+.join-screen__content-row > *:first-child {
+  flex: 7 1 auto;
+}
+
+.join-screen__content-row > * {
+  flex: 1 1 auto;
+}
