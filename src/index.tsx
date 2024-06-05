@@ -1,14 +1,20 @@
-import React from 'react'
+import React, { createContext } from 'react'
 import ReactDOM from 'react-dom/client'
-import './index.css'
 import reportWebVitals from './reportWebVitals'
+import { configureDependencyManager } from './app_starter'
 import App from './App'
+import './index.css'
+import { DepManagerContext } from './core/contexts/DepManager.Context'
+
+const depManager = configureDependencyManager()
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
+  <DepManagerContext.Provider value={depManager}>
     <App />
-  </React.StrictMode>
+  </DepManagerContext.Provider>
+  // </React.StrictMode>
 )
 
 // If you want to start measuring performance in your app, pass a function

@@ -28,17 +28,41 @@ export function JoinChatScreen() {
     setSelectedTabIndex(index)
   }
 
-  const onClickButton = () => {
-    if (selectedTabIndex === 0) {
-      openChat(text)
+  const isTokenValid = (token: string): boolean => true
+
+  // TODO: prettify
+  const isInviteURLValid = (link: URL): boolean => {
+    const parts = link.pathname.split('/')
+    return (
+      parts.length === 3 &&
+      parts[0].length === 0 &&
+      parts[1].length > 0 &&
+      parts[1] === 'chat' &&
+      parts[2].length > 0 &&
+      isTokenValid(parts[2])
+    )
+  }
+
+  const openChat = () => {
+    const url = new URL(text)
+    if (isInviteURLValid(url)) {
+      navigate(url.pathname)
     } else {
-      // TODO
-      openChat(text)
+      console.error('Invalid invite link')
     }
   }
 
-  const openChat = (chatID: string) => {
-    navigate(`chat/${chatID}`)
+  // TODO:
+  const createChat = () => {
+    navigate(`/chat/${text}`)
+  }
+
+  const onClickButton = () => {
+    if (selectedTabIndex === 0) {
+      openChat()
+    } else {
+      createChat()
+    }
   }
 
   return (

@@ -1,0 +1,32 @@
+.overlay-button {
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  transition: all .075s ease;
+  background-color: #2F3036;
+}
+
+.overlay-button:hover {
+  background-color: #404148;
+}
+
+.overlay-button__disabled {
+  background-color: white;
+}
+
+.overlay-button__disabled:hover {
+  background-color: white;
+}
+
+.overlay-button__red {
+  background-color: rgb(255, 65, 65);
+}
+
+.overlay-button__red:hover {
+  background-color: rgb(255, 112, 112);
+}

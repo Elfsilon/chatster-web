@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { AppButton } from '../AppButton/AppButton.Component'
 import './ChatOverlay.Component.css'
+import { CameraControl, EndCallControl, MicroControl } from '../../OverlayControlButton/OverlayControlButton'
 
 type Props = {
   cameraEnabled: boolean
@@ -18,9 +19,9 @@ export function ChatOverlay({ microEnabled, cameraEnabled, toggleMicro, toggleCa
         <AppButton name="Copy invite link" disabled={false} />
       </div>
       <div className="chat-overlay__controls">
-        <div onClick={toggleMicro}>{microEnabled ? 'Disable micro' : 'Enable micro'}</div>
-        <div onClick={toggleCamera}>{cameraEnabled ? 'Disable camera' : 'Enable camera'}</div>
-        <div onClick={onLeave}>Leave</div>
+        <CameraControl enabled={cameraEnabled} onClick={toggleCamera} />
+        <MicroControl enabled={microEnabled} onClick={toggleMicro} />
+        <EndCallControl onClick={onLeave} />
       </div>
     </div>
   )

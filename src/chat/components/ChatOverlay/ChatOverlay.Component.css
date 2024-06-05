@@ -17,8 +17,8 @@
 
 .chat-overlay__controls {
   display: flex;
-  column-gap: 8px;
-  padding-bottom: 36px;
+  column-gap: 12px;
+  padding-bottom: 24px;
 }
 
 .chat-overlay__name {
