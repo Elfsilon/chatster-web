@@ -14,8 +14,8 @@
 
   display: grid;
   justify-content: center;
-  grid-template-columns: repeat(auto-fit, 45%);
-  /* grid-template-columns: repeat(2, 1fr); */
+  /* grid-template-columns: repeat(auto-fit, 45%); */
+  grid-template-columns: repeat(2, 1fr);
   gap: 24px;
 }
 

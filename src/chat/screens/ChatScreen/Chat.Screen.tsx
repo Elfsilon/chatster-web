@@ -71,7 +71,7 @@ export function ChatScreen() {
   } else {
     content = (
       <div className="chat-grid">
-        <UserView key="my-view" name="test" stream={localStream} cameraEnabled={true} />
+        <UserView key="my-view" name="test" stream={localStream} cameraEnabled={true} muted={true} />
         {remoteStream ? (
           <UserView key={`remote-user-view`} name="remote-peer" stream={remoteStream} cameraEnabled={true} />
         ) : null}

@@ -6,9 +6,10 @@ type Props = {
   name: string
   stream: MediaStream | null
   cameraEnabled: boolean
+  muted?: boolean
 }
 
-export function UserView({ name, stream, cameraEnabled }: Props) {
+export function UserView({ name, stream, cameraEnabled, muted = false }: Props) {
   const refVideo = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
@@ -22,7 +23,7 @@ export function UserView({ name, stream, cameraEnabled }: Props) {
   return (
     <div className="user-view">
       <div className={labelClasses}>{name}</div>
-      <video className={vieoClasses} ref={refVideo} autoPlay></video>
+      <video className={vieoClasses} ref={refVideo} autoPlay muted={muted}></video>
     </div>
   )
 }
