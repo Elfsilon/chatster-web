@@ -1,11 +1,11 @@
-import { useNavigate, useParams } from 'react-router-dom'
 import './Chat.Screen.css'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { UserView } from '../../components/UserView/UserView.Component'
 import { ChatOverlay } from '../../components/ChatOverlay/ChatOverlay.Component'
 import { DepManagerContext } from '../../../core/contexts/DepManager.Context'
 import { DepKeys } from '../../../core/constants/dependency_keys'
-import { ChatController } from '../../store/store'
+import { ChatController } from '../../store/p2p_chat_controller'
 
 export function ChatScreen() {
   const { chatID } = useParams()
@@ -13,7 +13,7 @@ export function ChatScreen() {
 
   const deps = useContext(DepManagerContext)
   const controller: ChatController = deps.provide(DepKeys.chatController)
-  const { localStream, remoteStream, status } = controller.useChatState()
+  const { localStream, remoteStream, connectionStatus } = controller.useChatState()
 
   const [userList, setUserList] = useState<string[]>(['Max', 'Toli Wild'])
   const [microEnabled, setMicroEnabled] = useState<boolean>(false)
@@ -32,38 +32,45 @@ export function ChatScreen() {
 
   useEffect(() => {
     init()
+
+    return () => {
+      controller.closePeerConnection()
+    }
   }, [])
 
   const init = async () => {
-    const localStream = await navigator.mediaDevices.getUserMedia({ video: true })
+    const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
     await controller.establishPeerConnection(localStream)
-    // const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true })
-    // switchTracks(stream.getAudioTracks(), microEnabled)
-    // setUserStream(stream)
+    switchTracks(localStream.getAudioTracks(), microEnabled)
   }
 
   const switchTracks = async (tracks: MediaStreamTrack[], value: boolean) => {
-    // tracks.forEach((t) => (t.enabled = value))
+    tracks.forEach((t) => (t.enabled = value))
   }
 
   const toggleMicro = () => {
-    // if (userStream) {
-    const newValue = !microEnabled
-    //   switchTracks(userStream.getAudioTracks(), newValue)
-    setMicroEnabled(newValue)
-    // }
+    if (localStream) {
+      const newValue = !microEnabled
+      switchTracks(localStream.getAudioTracks(), newValue)
+      setMicroEnabled(newValue)
+    }
   }
 
   const toggleCamera = () => {
-    // if (userStream) {
-    const newValue = !cameraEnabled
-    //   switchTracks(userStream.getVideoTracks(), newValue)
-    setCameraEnabled(newValue)
-    // }
+    if (localStream) {
+      const newValue = !cameraEnabled
+      switchTracks(localStream.getVideoTracks(), newValue)
+      setCameraEnabled(newValue)
+    }
   }
 
-  const onLeave = () => {
+  const onLeave = async () => {
+    await controller.closePeerConnection()
     navigate('/')
+  }
+
+  const onCopyLink = () => {
+    controller.copyInviteLink()
   }
 
   return (
@@ -74,9 +81,10 @@ export function ChatScreen() {
         toggleMicro={toggleMicro}
         toggleCamera={toggleCamera}
         onLeave={onLeave}
+        copyLink={onCopyLink}
       />
-      {status.errorMessage ? (
-        <div>Error: {status.errorMessage}</div>
+      {connectionStatus.errorMessage ? (
+        <div>Error: {connectionStatus.errorMessage}</div>
       ) : (
         <div className={gridClass}>
           {userList
@@ -86,7 +94,7 @@ export function ChatScreen() {
                 key={`${index}-user`}
                 name={user}
                 stream={index == 0 ? localStream : remoteStream}
-                cameraEnabled={cameraEnabled}
+                cameraEnabled={true}
               />
             ))}
         </div>

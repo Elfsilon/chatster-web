@@ -1,5 +1,10 @@
 import { io } from 'socket.io-client'
 import { ClientSocket } from './Chat.Service.types'
+import axios from 'axios'
+
+type ConnectionTokenResponse = {
+  token: string
+}
 
 const RTC_CONFIG: RTCConfiguration = {
   iceServers: [
@@ -16,7 +21,11 @@ const RTC_CONFIG: RTCConfiguration = {
   ],
 }
 
-const URL = 'ws://localhost:3000/signalling'
+// const API_URL = 'http://localhost:3000'
+// const WS_URL = 'ws://localhost:3000/signalling'
+
+const API_URL = 'https://chatster-production.up.railway.app'
+const WS_URL = 'https://chatster-production.up.railway.app/signalling'
 
 type StreamListener = (stream: MediaStream | null) => void
 
@@ -26,6 +35,14 @@ type ServerPermission = {
 }
 
 export class ChatService {
+  private connectionToken?: string
+  get chatToken(): string | undefined {
+    return this.connectionToken
+  }
+  set chatToken(token: string | undefined) {
+    this.connectionToken = token
+  }
+
   private socket?: ClientSocket
   private peerConnection?: RTCPeerConnection
 
@@ -38,6 +55,52 @@ export class ChatService {
 
   public unlistenStreams(tag: string) {
     this.remoteStreamListeners.delete(tag)
+  }
+
+  public async createConnectionToken(chatName: string): Promise<string> {
+    const res = await axios.get(`${API_URL}/p2p/token`)
+    const data: ConnectionTokenResponse = res.data
+    return data.token
+  }
+
+  /**
+   * Must be called after setting the connectionToken
+   */
+  public async establishPeerConnection(localStream?: MediaStream): Promise<void> {
+    if (localStream) {
+      this.localStream = localStream
+    }
+
+    if (!this.localStream) {
+      throw Error('unable to establish peer connection: localStream is null or undefined')
+    }
+
+    this.socket?.disconnect()
+    this.peerConnection?.close()
+
+    this.socket = io(WS_URL, {
+      auth: {
+        token: this.connectionToken,
+      },
+    })
+    const permission = await this.getServerPermission(this.socket)
+    if (!permission.status) {
+      throw Error(permission.message)
+    }
+
+    this.peerConnection = await this.setupPeerConnection(this.localStream, this.socket)
+
+    this.registerHandlers(this.socket, this.peerConnection)
+
+    this.socket.emit('get-my-role')
+  }
+
+  public async closePeerConnection(): Promise<void> {
+    this.peerConnection?.close()
+    this.peerConnection = undefined
+
+    this.socket?.close()
+    this.socket = undefined
   }
 
   private notifyRemoteStreamListeners(stream: MediaStream | null) {
@@ -120,12 +183,12 @@ export class ChatService {
     socket.on('other-peer-disconnected', () => {
       // Recreate peer connection with the old local stream
       this.notifyRemoteStreamListeners(null)
-      this.establishPeerConnection()
+      if (this.connectionToken) {
+        this.establishPeerConnection()
+      } else {
+        throw Error('unable to establish peer connection: connectionToken is missing')
+      }
     })
-
-    // socket.on('kicked', () => {
-    //   console.log('You were kicked')
-    // })
   }
 
   async getServerPermission(socket: ClientSocket): Promise<ServerPermission> {
@@ -134,30 +197,5 @@ export class ChatService {
         resolve({ status, message })
       })
     })
-  }
-
-  public async establishPeerConnection(localStream?: MediaStream): Promise<void> {
-    if (localStream) {
-      this.localStream = localStream
-    }
-
-    if (!this.localStream) {
-      throw Error('unable to establish peer connection: localStream is null or undefined')
-    }
-
-    this.socket?.disconnect()
-    this.peerConnection?.close()
-
-    this.socket = io(URL)
-    const permission = await this.getServerPermission(this.socket)
-    if (!permission.status) {
-      throw Error(permission.message)
-    }
-
-    this.peerConnection = await this.setupPeerConnection(this.localStream, this.socket)
-
-    this.registerHandlers(this.socket, this.peerConnection)
-
-    this.socket.emit('get-my-role')
   }
 }

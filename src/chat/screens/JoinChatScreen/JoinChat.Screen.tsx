@@ -1,12 +1,18 @@
-import { useMemo, useState } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { AppButton } from '../../components/AppButton/AppButton.Component'
 import { AppInput } from '../../components/AppInput/AppInput.Component'
 import { Tabs } from '../../components/TabsComponent/Tabs.Component'
 import './JoinChat.Screen.css'
 import { useNavigate } from 'react-router-dom'
+import { DepManagerContext } from '../../../core/contexts/DepManager.Context'
+import { ChatController } from '../../store/p2p_chat_controller'
+import { DepKeys } from '../../../core/constants/dependency_keys'
 
 export function JoinChatScreen() {
   const navigate = useNavigate()
+
+  const deps = useContext(DepManagerContext)
+  const controller: ChatController = deps.provide(DepKeys.chatController)
 
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
   const [text, setText] = useState<string>('')
@@ -31,30 +37,38 @@ export function JoinChatScreen() {
   const isTokenValid = (token: string): boolean => true
 
   // TODO: prettify
-  const isInviteURLValid = (link: URL): boolean => {
+  const validateInviteURL = (link: URL): [boolean, string | undefined] => {
     const parts = link.pathname.split('/')
-    return (
+
+    const isUrlValid =
       parts.length === 3 &&
       parts[0].length === 0 &&
       parts[1].length > 0 &&
       parts[1] === 'chat' &&
       parts[2].length > 0 &&
       isTokenValid(parts[2])
-    )
+
+    const token = isUrlValid ? parts[2] : undefined
+
+    return [isUrlValid, token]
   }
 
-  const openChat = () => {
+  const openChat = async () => {
     const url = new URL(text)
-    if (isInviteURLValid(url)) {
+    const [isValid, token] = validateInviteURL(url)
+    if (isValid) {
+      await controller.join(token!)
       navigate(url.pathname)
     } else {
       console.error('Invalid invite link')
     }
   }
 
-  // TODO:
-  const createChat = () => {
-    navigate(`/chat/${text}`)
+  const createChat = async () => {
+    const token = await controller.create(text)
+    if (token) {
+      navigate(`/chat/${token}`)
+    }
   }
 
   const onClickButton = () => {

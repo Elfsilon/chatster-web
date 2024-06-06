@@ -9,14 +9,15 @@ type Props = {
   toggleMicro?: () => void
   toggleCamera?: () => void
   onLeave?: () => void
+  copyLink?: () => void
 }
 
-export function ChatOverlay({ microEnabled, cameraEnabled, toggleMicro, toggleCamera, onLeave }: Props) {
+export function ChatOverlay({ microEnabled, cameraEnabled, toggleMicro, toggleCamera, onLeave, copyLink }: Props) {
   return (
     <div className="chat-overlay">
       <div className="chat-overlay__top">
         <p className="chat-overlay__name">Chat name</p>
-        <AppButton name="Copy invite link" disabled={false} />
+        <AppButton name="Copy invite link" disabled={false} onClick={copyLink} />
       </div>
       <div className="chat-overlay__controls">
         <CameraControl enabled={cameraEnabled} onClick={toggleCamera} />
