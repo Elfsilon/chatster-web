@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/chatster-web/static/css/main.f8338e7a.css",
-    "main.js": "/chatster-web/static/js/main.5667f172.js",
+    "main.js": "/chatster-web/static/js/main.6f590e9c.js",
     "static/js/453.94f32dc9.chunk.js": "/chatster-web/static/js/453.94f32dc9.chunk.js",
     "index.html": "/chatster-web/index.html",
     "main.f8338e7a.css.map": "/chatster-web/static/css/main.f8338e7a.css.map",
-    "main.5667f172.js.map": "/chatster-web/static/js/main.5667f172.js.map",
+    "main.6f590e9c.js.map": "/chatster-web/static/js/main.6f590e9c.js.map",
     "453.94f32dc9.chunk.js.map": "/chatster-web/static/js/453.94f32dc9.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f8338e7a.css",
-    "static/js/main.5667f172.js"
+    "static/js/main.6f590e9c.js"
   ]
 }
