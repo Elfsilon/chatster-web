@@ -11,10 +11,11 @@
   flex-direction: column;
   align-items: center;
   row-gap: 20px;
-  min-width: 400px;
+  width: 400px;
   background-color: #2F3036;
   border-radius: 15px;
   padding: 28px 24px;
+  margin: 0 42px;
 }
 
 .join-screen__content-row {
@@ -23,10 +24,3 @@
   column-gap: 12px;
 }
 
-.join-screen__content-row > *:first-child {
-  flex: 7 1 auto;
-}
-
-.join-screen__content-row > * {
-  flex: 1 1 auto;
-}

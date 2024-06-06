@@ -7,7 +7,7 @@ export function AppRouter() {
     <HashRouter>
       <Routes>
         <Route path="/" element={<JoinChatScreen />} />
-        <Route path="chat/:chatID" element={<ChatScreen />} />
+        <Route path="chat/:token" element={<ChatScreen />} />
       </Routes>
     </HashRouter>
   )

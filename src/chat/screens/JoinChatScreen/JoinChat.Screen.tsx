@@ -2,11 +2,11 @@ import { useContext, useMemo, useState } from 'react'
 import { AppButton } from '../../components/AppButton/AppButton.Component'
 import { AppInput } from '../../components/AppInput/AppInput.Component'
 import { Tabs } from '../../components/TabsComponent/Tabs.Component'
-import './JoinChat.Screen.css'
 import { useNavigate } from 'react-router-dom'
 import { DepManagerContext } from '../../../core/contexts/DepManager.Context'
 import { ChatController } from '../../store/p2p_chat_controller'
 import { DepKeys } from '../../../core/constants/dependency_keys'
+import './JoinChat.Screen.css'
 
 export function JoinChatScreen() {
   const navigate = useNavigate()
@@ -34,27 +34,7 @@ export function JoinChatScreen() {
     setSelectedTabIndex(index)
   }
 
-  // const isTokenValid = (token: string): boolean => true
-
-  // TODO: prettify
-  // const validateInviteURL = (link: URL): [boolean, string | undefined] => {
-  //   const parts = link.pathname.split('/')
-
-  //   const isUrlValid =
-  //     parts.length === 3 &&
-  //     parts[0].length === 0 &&
-  //     parts[1].length > 0 &&
-  //     parts[1] === 'chat' &&
-  //     parts[2].length > 0 &&
-  //     isTokenValid(parts[2])
-
-  //   const token = isUrlValid ? parts[2] : undefined
-
-  //   return [isUrlValid, token]
-  // }
-
   const openChat = async () => {
-    await controller.join(text)
     navigate(`/chat/${text}`)
   }
 

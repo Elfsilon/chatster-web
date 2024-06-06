@@ -1,6 +1,6 @@
 import './Chat.Screen.css'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { UserView } from '../../components/UserView/UserView.Component'
 import { ChatOverlay } from '../../components/ChatOverlay/ChatOverlay.Component'
 import { DepManagerContext } from '../../../core/contexts/DepManager.Context'
@@ -8,27 +8,16 @@ import { DepKeys } from '../../../core/constants/dependency_keys'
 import { ChatController } from '../../store/p2p_chat_controller'
 
 export function ChatScreen() {
-  const { chatID } = useParams()
+  const { token } = useParams()
+
   const navigate = useNavigate()
 
   const deps = useContext(DepManagerContext)
   const controller: ChatController = deps.provide(DepKeys.chatController)
   const { localStream, remoteStream, connectionStatus } = controller.useChatState()
 
-  const [userList, setUserList] = useState<string[]>(['Max', 'Toli Wild'])
   const [microEnabled, setMicroEnabled] = useState<boolean>(false)
   const [cameraEnabled, setCameraEnabled] = useState<boolean>(true)
-
-  const gridClass = useMemo(() => {
-    if (userList.length <= 1) {
-      return `chat-grid-1`
-    } else if (userList.length <= 2) {
-      return `chat-grid-2`
-    } else if (userList.length <= 4) {
-      return `chat-grid-4`
-    }
-    return `chat-grid-6`
-  }, [userList])
 
   useEffect(() => {
     init()
@@ -39,9 +28,12 @@ export function ChatScreen() {
   }, [])
 
   const init = async () => {
-    const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-    await controller.establishPeerConnection(localStream)
-    switchTracks(localStream.getAudioTracks(), microEnabled)
+    if (token) {
+      await controller.join(token)
+      const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      await controller.establishPeerConnection(localStream)
+      switchTracks(localStream.getAudioTracks(), microEnabled)
+    }
   }
 
   const switchTracks = async (tracks: MediaStreamTrack[], value: boolean) => {
@@ -73,6 +65,20 @@ export function ChatScreen() {
     controller.copyConnectionToken()
   }
 
+  let content: JSX.Element
+  if (connectionStatus.errorMessage) {
+    content = <div>Error: {connectionStatus.errorMessage}</div>
+  } else {
+    content = (
+      <div className="chat-grid">
+        <UserView key="my-view" name="test" stream={localStream} cameraEnabled={true} />
+        {remoteStream ? (
+          <UserView key={`remote-user-view`} name="remote-peer" stream={remoteStream} cameraEnabled={true} />
+        ) : null}
+      </div>
+    )
+  }
+
   return (
     <div className="chat-screen">
       <ChatOverlay
@@ -83,22 +89,7 @@ export function ChatScreen() {
         onLeave={onLeave}
         copyLink={onCopyLink}
       />
-      {connectionStatus.errorMessage ? (
-        <div>Error: {connectionStatus.errorMessage}</div>
-      ) : (
-        <div className={gridClass}>
-          {userList
-            .filter((_, index) => index < 6)
-            .map((user, index) => (
-              <UserView
-                key={`${index}-user`}
-                name={user}
-                stream={index == 0 ? localStream : remoteStream}
-                cameraEnabled={true}
-              />
-            ))}
-        </div>
-      )}
+      {content}
     </div>
   )
 }

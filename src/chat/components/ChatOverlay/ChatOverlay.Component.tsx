@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { AppButton } from '../AppButton/AppButton.Component'
 import './ChatOverlay.Component.css'
 import { CameraControl, EndCallControl, MicroControl } from '../../OverlayControlButton/OverlayControlButton'
@@ -17,7 +16,7 @@ export function ChatOverlay({ microEnabled, cameraEnabled, toggleMicro, toggleCa
     <div className="chat-overlay">
       <div className="chat-overlay__top">
         <p className="chat-overlay__name">Chat name</p>
-        <AppButton name="Copy connection token" disabled={false} onClick={copyLink} />
+        <AppButton name="Copy token" disabled={false} onClick={copyLink} />
       </div>
       <div className="chat-overlay__controls">
         <CameraControl enabled={cameraEnabled} onClick={toggleCamera} />
