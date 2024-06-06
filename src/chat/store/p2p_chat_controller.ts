@@ -50,10 +50,11 @@ export class ChatController {
     this.service.chatToken = connectionToken
   }
 
-  public async copyInviteLink() {
+  public async copyConnectionToken() {
     const connectionToken = this.service.chatToken
-    const link = `http://localhost:3001/chat/${connectionToken}`
-    await navigator.clipboard.writeText(link)
+    if (connectionToken) {
+      await navigator.clipboard.writeText(connectionToken)
+    }
   }
 
   public async establishPeerConnection(localStream: MediaStream) {

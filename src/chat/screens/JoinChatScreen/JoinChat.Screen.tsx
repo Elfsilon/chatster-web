@@ -19,7 +19,7 @@ export function JoinChatScreen() {
 
   const [placeholder, buttonName] = useMemo(() => {
     if (selectedTabIndex === 0) {
-      return ['Invite link', 'Join']
+      return ['Connection token', 'Join']
     }
 
     return ['Chat name', 'Create']
@@ -34,34 +34,28 @@ export function JoinChatScreen() {
     setSelectedTabIndex(index)
   }
 
-  const isTokenValid = (token: string): boolean => true
+  // const isTokenValid = (token: string): boolean => true
 
   // TODO: prettify
-  const validateInviteURL = (link: URL): [boolean, string | undefined] => {
-    const parts = link.pathname.split('/')
+  // const validateInviteURL = (link: URL): [boolean, string | undefined] => {
+  //   const parts = link.pathname.split('/')
 
-    const isUrlValid =
-      parts.length === 3 &&
-      parts[0].length === 0 &&
-      parts[1].length > 0 &&
-      parts[1] === 'chat' &&
-      parts[2].length > 0 &&
-      isTokenValid(parts[2])
+  //   const isUrlValid =
+  //     parts.length === 3 &&
+  //     parts[0].length === 0 &&
+  //     parts[1].length > 0 &&
+  //     parts[1] === 'chat' &&
+  //     parts[2].length > 0 &&
+  //     isTokenValid(parts[2])
 
-    const token = isUrlValid ? parts[2] : undefined
+  //   const token = isUrlValid ? parts[2] : undefined
 
-    return [isUrlValid, token]
-  }
+  //   return [isUrlValid, token]
+  // }
 
   const openChat = async () => {
-    const url = new URL(text)
-    const [isValid, token] = validateInviteURL(url)
-    if (isValid) {
-      await controller.join(token!)
-      navigate(url.pathname)
-    } else {
-      console.error('Invalid invite link')
-    }
+    await controller.join(text)
+    navigate(`/chat/${text}`)
   }
 
   const createChat = async () => {

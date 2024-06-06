@@ -70,7 +70,7 @@ export function ChatScreen() {
   }
 
   const onCopyLink = () => {
-    controller.copyInviteLink()
+    controller.copyConnectionToken()
   }
 
   return (
